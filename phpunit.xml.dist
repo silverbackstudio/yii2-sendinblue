@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit bootstrap="./tests/bootstrap.php"
+		colors="true"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+		stopOnFailure="false">
+		<testsuites>
+			<testsuite name="Test Suite">
+				<directory>./tests</directory>
+			</testsuite>
+		</testsuites>
+		<php>
+			<const name="SENDINBLUE_API_KEY" value="foobar"/>		
+			<const name="SENDINBLUE_TEMPLATE" value="1"/>		
+			<const name="SENDINBLUE_FROM" value="from@example.com"/>		
+			<const name="SENDINBLUE_TO" value="to@example.com"/>		
+			<const name="SENDINBLUE_CC" value="cc@example.com"/>		
+			<const name="SENDINBLUE_BCC" value="bcc@example.com"/>		
+			<const name="SENDINBLUE_REPLYTO" value="replyto@example.com"/>		
+		</php>
+</phpunit>

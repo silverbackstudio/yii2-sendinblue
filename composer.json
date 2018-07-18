@@ -1,0 +1,29 @@
+{
+    "name": "silverback/yii2-sendinblue",
+    "description": "Sendinblue integration and Mailer for the Yii framework",
+    "keywords": ["yii2", "sendinblue", "mailer", "email" ],
+    "type": "yii2-extension",    
+    "require": {
+        "yiisoft/yii2": "^2.0.14",
+        "sendinblue/api-v3-sdk": "^6.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
+    },    
+    "license": "MIT",
+    "autoload": {
+        "psr-4": { "yii\\sendinblue\\": "src" }
+    },    
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],      
+    "authors": [
+        {
+            "name": "Brando Meniconi",
+            "email": "b.meniconi@silverbackstudio.it"
+        }
+    ]
+}
