@@ -151,7 +151,7 @@ class Contacts extends Component
         $createContact = new SendinBlue\Client\Model\CreateContact($contact_attributes);
         
         if (! empty($list_ids) ) {
-            $createContact->setListIds($list_ids);
+            $createContact->setListIds( (array)$list_ids );
         }
         
         Yii::debug('SendinBlue creating new contact with params ' . VarDumper::export($contact_attributes),  __METHOD__);
