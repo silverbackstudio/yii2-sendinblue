@@ -42,22 +42,6 @@ class Mailer extends BaseMailer
     public $apikey;
 
     /**
-     * Message default class name.
-     * 
-     * @var string 
-     */
-    public $messageClass = 'yii\sendinblue\transactional\SmtpMessage';
-
-
-    /**
-     * Message default class name.
-     * 
-     * @var string 
-     */
-    public $templateMessageClass = 'yii\sendinblue\transactional\TemplateMessage';
-
-
-    /**
      * Object for this instance
      * 
      * @var The SendinBlue\Client\Configuration 
@@ -164,7 +148,7 @@ class Mailer extends BaseMailer
     {
         
         if (is_numeric($view) ) {
-            $message = $this->createMessage(true);
+            $message = $this->createMessage();
             $message->setTemplate($view);
             $message->setAttributes($params);
         } else {
@@ -178,13 +162,13 @@ class Mailer extends BaseMailer
      *
      * @inheritdoc
      */
-    protected function createMessage( $useTemplate = false )
+    protected function createMessage()
     {
         
         $config = $this->messageConfig;
         
         if (!array_key_exists('class', $config)) {
-            $config['class'] = $useTemplate ? $this->templateMessageClass : $this->messageClass;
+            $config['class'] = Message::class;
         }
         
         $config['mailer'] = $this;
@@ -202,18 +186,11 @@ class Mailer extends BaseMailer
         $apiInstance = new SendinBlue\Client\Api\SMTPApi(null, $this->config);
         
         try {
-            
-            if ($message instanceof $this->templateMessageClass ) {
-                $template = $message->getTemplate();
-                $result = $apiInstance->sendTemplate($template, $message->getSendinblueModel());
-            } else {
-                $result = $apiInstance->sendTransacEmail($message->getSendinblueModel());
-            }
+            $result = $apiInstance->sendTransacEmail($message->getSendinblueModel());   
             
             Yii::info('Sendinblue Mailer sent SMTP email with result: ' . VarDumper::export($result), __METHOD__);
         } catch ( SendinBlue\Client\ApiException $e ) {
             $this->lastError = json_decode($e->getResponseBody());
-            
             Yii::error('Sendinblue API client exception: ' . VarDumper::export($this->lastError), __METHOD__);
             return false;
         } catch ( Exception $e ) {

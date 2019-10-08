@@ -3,8 +3,7 @@
 Provide the following classes:
 
 * **[yii/sendinblue/transactional/Mailer](src/transactional/Mailer.php)**: A class that implements [MailerInterface](https://www.yiiframework.com/doc/api/2.0/yii-mail-mailerinterface) and uses [Sendinblue API v3](https://developers.sendinblue.com/v3.0/reference) to send email
-* **[yii/sendinblue/transactional/SmtpMessage](src/transactional/SmtpMessage.php)**: A class that implements [MessageInterface](https://www.yiiframework.com/doc/api/2.0/yii-mail-messageinterface) for standard emails
-* **[yii/sendinblue/transactional/TemplateMessage](src/transactional/TemplateMessage)**: A class that implements [MessageInterface](https://www.yiiframework.com/doc/api/2.0/yii-mail-messageinterface) that supports Sendinblue email templates
+* **[yii/sendinblue/transactional/Message](src/transactional/Message.php)**: A class that implements [MessageInterface](https://www.yiiframework.com/doc/api/2.0/yii-mail-messageinterface) for standard emails
 
 The choice between the two message types is made automatically by the `compose()` method.
 

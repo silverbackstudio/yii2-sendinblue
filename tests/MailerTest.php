@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use yii\sendinblue\transactional\Mailer;
-use yii\sendinblue\transactional\SmtpMessage;
-use yii\sendinblue\transactional\TemplateMessage;
+use yii\sendinblue\transactional\Message;
 use yii\base\InvalidConfigException;
 
 use yii\mail\BaseMessage;
@@ -35,8 +34,8 @@ final class MailerTest extends TestCase
     
     public function testCompose()
     {
-        $this->assertInstanceOf(SmtpMessage::class, $this->mailer->compose());
-        $this->assertInstanceOf(TemplateMessage::class, $this->mailer->compose(1));
+        $this->assertInstanceOf(Message::class, $this->mailer->compose());
+        $this->assertInstanceOf(Message::class, $this->mailer->compose(1));
     }  
     
     public function testSendText()

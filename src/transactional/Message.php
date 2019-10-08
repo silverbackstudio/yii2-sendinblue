@@ -27,7 +27,7 @@ use SendinBlue;
  * @version  Release: 1.0
  * @link     http://www.silverbackstudio.it/
  */
-class SmtpMessage extends BaseMessage
+class Message extends BaseMessage
 {
 
     /**
@@ -390,6 +390,93 @@ class SmtpMessage extends BaseMessage
         $this->attachContent($content, $options);
     }
     
+    /**
+     * Return the active template
+     *
+     * @since 1.0.0
+     *
+     * @return int
+     */
+    public function getTemplate()
+    {
+        return $this->sendinblueModel->getTemplateId();
+    }
+    
+    /**
+     * Sets the active template
+     *
+     * @param int|string $template The template ID
+     *
+     * @since 1.0.0
+     * 
+     * @return void
+     */
+    public function setTemplate( $template )
+    {
+        $this->sendinblueModel->setTemplateId( intval($template) );
+        
+        return $this;
+    }
+
+    /**
+     * Return the message attributes
+     *
+     * @param array $flattened Return the Sendinblue flattned attributes or the original ones
+     * 
+     * @since 1.0.0
+     *
+     * @return array|null
+     */
+    public function getAttributes( $flattened = true )
+    {
+        if ($flattened ) {
+            return $this->sendinblueModel->getParams();
+        } else {
+            return $this->attributes;
+        }
+    }
+    
+    /**
+     * Sets the message attributes
+     *
+     * @param array $attributes The attributes to set in the message
+     *
+     * @since  1.0.0 
+     * @return $this
+     */
+    public function setAttributes( $attributes )
+    {
+        $this->attributes = $attributes;
+        $this->sendinblueModel->setParams(self::flatten($attributes));        
+        
+        return $this;
+    }    
+
+    /**
+     * Flatten an array for email attibutes
+     *
+     * @param array  $array  The multidimensional array to be flattened
+     * @param string $prefix The prefix to prepend to every record
+     * 
+     * @return array
+     * @since  1.0.0
+     */
+    public static function flatten( $array, $prefix = '' )
+    {
+        $output = array();
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $output = array_merge($output, self::flatten($value, $prefix . $key . '__'));
+            } elseif ($value instanceof Model ) {
+                $output = array_merge($output, self::flatten($value->toArray(), $prefix . $key . '__'));
+            } else {
+                $output[ strtoupper($prefix . $key) ] = $value;
+            }
+        }
+    
+        return $output;
+    }      
+
     /**
      *
      * @inheritdoc

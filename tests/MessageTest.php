@@ -3,20 +3,19 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use yii\sendinblue\transactional\SmtpMessage;
-use yii\sendinblue\transactional\TemplateMessage;
+use yii\sendinblue\transactional\Message;
 use yii\base\InvalidConfigException;
 
 use yii\mail\BaseMessage;
 
-final class SmtpMessageTest extends TestCase
+final class MessageTest extends TestCase
 {
     
     private $message;
 
     protected function setUp()
     {
-        $this->message = new SmtpMessage();
+        $this->message = new Message();
     }    
     
     public function testCanGetSetCharset()
@@ -25,7 +24,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setCharset('utf8');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertEquals('utf8', $this->message->getCharset());
         
@@ -37,7 +36,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setFrom('testFrom@example.com');
 
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
         
         $this->assertInstanceOf(SendinBlue\Client\Model\SendSmtpEmailSender::class, $this->message->getSendinblueModel()->getSender());
         $this->assertEquals($this->message->getFrom(), 'testFrom@example.com');
@@ -49,7 +48,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setReplyTo('testReplyTo@example.com');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertInstanceOf(SendinBlue\Client\Model\SendSmtpEmailReplyTo::class, $this->message->getSendinblueModel()->getReplyTo());
         $this->assertEquals($this->message->getReplyTo(), 'testReplyTo@example.com');
@@ -61,7 +60,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setTo('testTo@example.com');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertContainsOnlyInstancesOf(SendinBlue\Client\Model\SendSmtpEmailTo::class, $this->message->getSendinblueModel()->getTo());
         $this->assertContains('testTo@example.com', $this->message->getTo());
@@ -81,7 +80,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setCc('testCc@example.com');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertContainsOnlyInstancesOf(SendinBlue\Client\Model\SendSmtpEmailCc::class, $this->message->getSendinblueModel()->getCc());
         $this->assertContains('testCc@example.com', $this->message->getCc());
@@ -101,7 +100,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setBcc('testBcc@example.com');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertContainsOnlyInstancesOf(SendinBlue\Client\Model\SendSmtpEmailBcc::class, $this->message->getSendinblueModel()->getBcc());
         $this->assertContains('testBcc@example.com', $this->message->getBcc());
@@ -121,7 +120,7 @@ final class SmtpMessageTest extends TestCase
         
         $message = $this->message->setSubject('Test Subject');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertEquals('Test Subject', $this->message->getSubject());
         
@@ -132,23 +131,35 @@ final class SmtpMessageTest extends TestCase
 
         $message = $this->message->setTextBody('text-body');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $message = $this->message->setHtmlBody('<div>text-body</div>');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
 
         $this->assertEquals('text-body', $this->message->getSendinblueModel()->getTextContent());
         $this->assertEquals('<div>text-body</div>', $this->message->getSendinblueModel()->getHtmlContent());
         
     }   
+
+    public function testCanGetSetTemplate()
+    {
+        $this->assertNull($this->message->getTemplate()); 
+        
+        $message = $this->message->setTemplate(99);
+        
+        $this->assertInstanceOf(Message::class, $message); 
+
+        $this->assertSame(99, $this->message->getTemplate());
+        
+    }  
     
     public function testCanAttach()
     {
 
         $message = $this->message->attachContent('0123456789');
         
-        $this->assertInstanceOf(SmtpMessage::class, $message); 
+        $this->assertInstanceOf(Message::class, $message); 
         
         $attachments = $this->message->getSendinblueModel()->getAttachment();
 
@@ -160,5 +171,36 @@ final class SmtpMessageTest extends TestCase
     {
          $this->assertInternalType('string', $this->message->toString());
     }
+
+    public function testCanGetSetAttributes()
+    {
+        $this->assertNull($this->message->getAttributes()); 
+        
+        $attributes = array(
+            'key1' => 'val1',
+            'key2' => 'val2',
+            'key3' => array(
+                'subkey1' => 'subvalue1',
+                'subkey2' => array( 
+                    'subsubkey1' => 'subsubvalue1' 
+                ),
+            )
+        );
+        
+        $message = $this->message->setAttributes($attributes);
+        
+        $this->assertInstanceOf(Message::class, $message); 
+
+        $expected = array(
+            'KEY1' => 'val1',
+            'KEY2' => 'val2',
+            'KEY3__SUBKEY1' => 'subvalue1',
+            'KEY3__SUBKEY2__SUBSUBKEY1' => 'subsubvalue1',
+        );
+
+        $this->assertEquals($expected, $this->message->getAttributes());
+        $this->assertEquals($attributes, $this->message->getAttributes(false));
+        
+    }       
 
 }
